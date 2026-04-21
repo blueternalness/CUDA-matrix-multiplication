@@ -10,6 +10,7 @@
 
 module purge
 module load legacy/CentOS7
+module load gcc/8.3.0
 module load nvidia-hpc-sdk/21.7
 nvcc p2_memory.cu -o p2_memory
 ./p2_memory
