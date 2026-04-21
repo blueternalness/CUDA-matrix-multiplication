@@ -5,10 +5,10 @@
 #SBATCH --mem=16GB
 #SBATCH --time=1:00:00
 #SBATCH --partition=gpu 
-#SBATCH --output=p1_job.out
+#SBATCH --output=p1_memory_job.out
 #SBATCH --gres=gpu:v100:1
 
 module purge
-module load nvidia-hpc-sdk
+module load nvidia-hpc-sdk/21.7
 nvcc p1_memory.cu -o p1_memory
 ./p1_memory

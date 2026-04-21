@@ -9,6 +9,6 @@
 #SBATCH --gres=gpu:v100:1
 
 module purge
-module load nvidia-hpc-sdk
+module load nvidia-hpc-sdk/21.7
 nvcc p1_async.cu -o p1_async
 ./p1_async
