@@ -10,10 +10,5 @@
 
 module purge
 module load nvidia-hpc-sdk
-
-# Compile the Shared Memory CUDA program
 nvcc p2_memory.cu -o p2_memory
-
-# Run Problem 1.2
-echo "--- Running Problem 1.2: Shared Memory Tiling ---"
 ./p2_memory

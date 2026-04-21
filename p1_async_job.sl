@@ -10,12 +10,5 @@
 
 module purge
 module load nvidia-hpc-sdk
-
-# Compile the Sequential Issue Loop program
 nvcc p1_async.cu -o p1_async
-
-# Run Problem 2.1
-echo "=========================================="
-echo " Problem 2.1: Sequential Issue Loop"
-echo "=========================================="
 ./p1_async

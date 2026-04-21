@@ -10,10 +10,5 @@
 
 module purge
 module load nvidia-hpc-sdk
-
-# Compile the Global Memory CUDA program
 nvcc p1_memory.cu -o p1_memory
-
-# Run Problem 1.1
-echo "--- Running Problem 1.1: Global Memory ---"
 ./p1_memory

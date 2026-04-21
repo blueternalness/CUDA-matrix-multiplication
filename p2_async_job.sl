@@ -10,12 +10,5 @@
 
 module purge
 module load nvidia-hpc-sdk
-
-# Compile the Parallel Issue Loops program
 nvcc p2_async.cu -o p2_async
-
-# Run Problem 2.2
-echo "=========================================="
-echo " Problem 2.2: Parallel Issue Loops"
-echo "=========================================="
 ./p2_async

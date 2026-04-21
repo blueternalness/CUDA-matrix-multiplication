@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #define N 1024
 
 __global__ void matmul(int *A, int *B, int *C, int row_offset) {
@@ -19,7 +18,6 @@ __global__ void matmul(int *A, int *B, int *C, int row_offset) {
 void run_test(int nStreams, int *h_A, int *h_B, int *h_C, int *d_A, int *d_B, int *d_C) {
     int streamSize = (N / nStreams) * N; 
     int streamBytes = streamSize * sizeof(int);
-
     cudaStream_t streams[16];
     for (int i = 0; i < nStreams; i++) {
         cudaStreamCreate(&streams[i]);
@@ -28,29 +26,21 @@ void run_test(int nStreams, int *h_A, int *h_B, int *h_C, int *d_A, int *d_B, in
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
-
     cudaMemcpy(d_B, h_B, N * N * sizeof(int), cudaMemcpyHostToDevice);
 
     dim3 dimBlock(16, 16);
     dim3 dimGrid(64 / nStreams, 64);
-
     cudaEventRecord(start);
-
-    // --- PARALLEL ISSUE LOOPS ---
-    
-    // Loop 1: All Host-to-Device Copies
     for (int i = 0; i < nStreams; i++) {
         int offset = i * streamSize;
         cudaMemcpyAsync(&d_A[offset], &h_A[offset], streamBytes, cudaMemcpyHostToDevice, streams[i]);
     }
 
-    // Loop 2: All Kernel Launches
     for (int i = 0; i < nStreams; i++) {
         int row_offset = i * (N / nStreams);
         matmul<<<dimGrid, dimBlock, 0, streams[i]>>>(d_A, d_B, d_C, row_offset);
     }
 
-    // Loop 3: All Device-to-Host Copies
     for (int i = 0; i < nStreams; i++) {
         int offset = i * streamSize;
         cudaMemcpyAsync(&h_C[offset], &d_C[offset], streamBytes, cudaMemcpyDeviceToHost, streams[i]);
@@ -62,15 +52,16 @@ void run_test(int nStreams, int *h_A, int *h_B, int *h_C, int *d_A, int *d_B, in
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
 
-    printf("Streams: %2d | Time: %8.3f ms | C[451][451] = %d\n", nStreams, milliseconds, h_C[451 * N + 451]);
+    printf("Streams: %2d, Time: %8.3f ms, C[451][451] = %d\n", nStreams, milliseconds, h_C[451 * N + 451]);
 
-    for (int i = 0; i < nStreams; i++) cudaStreamDestroy(streams[i]);
+    for (int i = 0; i < nStreams; i++) {
+        cudaStreamDestroy(streams[i]);
+    }
     cudaEventDestroy(start); cudaEventDestroy(stop);
 }
 
 int main() {
     int size = N * N * sizeof(int);
-    
     int *h_A, *h_B, *h_C;
     cudaMallocHost((void**)&h_A, size);
     cudaMallocHost((void**)&h_B, size);
@@ -98,6 +89,5 @@ int main() {
 
     cudaFree(d_A); cudaFree(d_B); cudaFree(d_C);
     cudaFreeHost(h_A); cudaFreeHost(h_B); cudaFreeHost(h_C);
-
     return 0;
 }
