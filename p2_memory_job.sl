@@ -9,6 +9,7 @@
 #SBATCH --gres=gpu:v100:1
 
 module purge
+module load legacy/CentOS7
 module load nvidia-hpc-sdk/21.7
 nvcc p2_memory.cu -o p2_memory
 ./p2_memory
