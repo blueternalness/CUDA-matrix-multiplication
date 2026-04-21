@@ -39,10 +39,10 @@ int main() {
     struct timespec start, stop;
     double time;
 
-    clock_gettime( CLOCK_REALTIME, &start)
+    clock_gettime( CLOCK_REALTIME, &start);
     matmul_global<<<dimGrid, dimBlock>>>(gpu_a, gpu_b, gpu_c);
     cudaDeviceSynchronize();    
-    clock_gettime( CLOCK_REALTIME, &stop)
+    clock_gettime( CLOCK_REALTIME, &stop);
     
     time = (stop.tv_sec - start.tv_sec) + (double)(stop.tv_nsec - start.tv_nsec) / 1e9;
     
